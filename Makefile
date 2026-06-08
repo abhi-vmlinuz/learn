@@ -2,7 +2,9 @@ BINARY    := learn
 PREFIX    := /usr/local
 DESTDIR   :=
 BINDIR    := $(PREFIX)/bin
-SHELL_NAME := $(notdir $(SHELL))
+# Detect real user's shell (works under sudo)
+REAL_USER := $(or $(SUDO_USER),$(USER))
+SHELL_NAME := $(notdir $(shell getent passwd $(REAL_USER) 2>/dev/null | cut -d: -f7 || echo $(SHELL)))
 VERSION   := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 LDFLAGS   := -ldflags "-s -w -X main.version=$(VERSION)"
 GOFLAGS   :=
