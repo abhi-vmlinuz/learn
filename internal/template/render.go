@@ -82,18 +82,23 @@ func autoTags(category, templateName string) string {
 // Render replaces placeholders in a template string.
 func Render(content, title, category, templateName string) string {
 	now := time.Now()
+	tags := autoTags(category, templateName)
 	replacements := map[string]string{
 		"{title}":    title,
 		"{date}":     now.Format("2006-01-02"),
 		"{datetime}": now.Format(time.RFC3339),
 		"{category}": category,
-		"{tags}":     autoTags(category, templateName),
+		"{tags}":     tags,
 	}
 
 	result := content
 	for placeholder, value := range replacements {
 		result = strings.ReplaceAll(result, placeholder, value)
 	}
+
+	// Fallback: if template still has old empty tags, inject auto-generated ones
+	result = strings.ReplaceAll(result, "tags: []", "tags: "+tags)
+
 	return result
 }
 
