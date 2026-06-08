@@ -2,7 +2,7 @@ BINARY    := learn
 PREFIX    := /usr/local
 DESTDIR   :=
 BINDIR    := $(PREFIX)/bin
-COMPLDIR  := $(PREFIX)/share/bash-completion/completions
+SHELL_NAME := $(notdir $(SHELL))
 VERSION   := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 LDFLAGS   := -ldflags "-s -w -X main.version=$(VERSION)"
 GOFLAGS   :=
@@ -14,13 +14,35 @@ all: build
 build:
 	go build $(GOFLAGS) $(LDFLAGS) -o $(BINARY) .
 
-install: build completions-bash
+install: build
 	install -Dm755 $(BINARY) $(DESTDIR)$(BINDIR)/$(BINARY)
-	install -Dm644 bash-completion $(DESTDIR)$(COMPLDIR)/$(BINARY)
+	@case "$(SHELL_NAME)" in \
+		bash) \
+			./$(BINARY) completion bash > $(BINARY).completion; \
+			install -Dm644 $(BINARY).completion $(DESTDIR)$(PREFIX)/share/bash-completion/completions/$(BINARY); \
+			rm -f $(BINARY).completion; \
+			echo "Installed bash completion to $(PREFIX)/share/bash-completion/completions/$(BINARY)";; \
+		zsh) \
+			./$(BINARY) completion zsh > $(BINARY).completion; \
+			install -Dm644 $(BINARY).completion $(DESTDIR)$(PREFIX)/share/zsh/site-functions/_$(BINARY); \
+			rm -f $(BINARY).completion; \
+			echo "Installed zsh completion to $(PREFIX)/share/zsh/site-functions/_$(BINARY)";; \
+		fish) \
+			./$(BINARY) completion fish > $(BINARY).completion; \
+			install -Dm644 $(BINARY).completion $(DESTDIR)$(PREFIX)/share/fish/vendor_completions.d/$(BINARY).fish; \
+			rm -f $(BINARY).completion; \
+			echo "Installed fish completion to $(PREFIX)/share/fish/vendor_completions.d/$(BINARY).fish";; \
+		*) \
+			echo "Unknown shell: $(SHELL_NAME). Skipping completion install.";; \
+	esac
 
 uninstall:
 	rm -f $(DESTDIR)$(BINDIR)/$(BINARY)
-	rm -f $(DESTDIR)$(COMPLDIR)/$(BINARY)
+	@case "$(SHELL_NAME)" in \
+		bash) rm -f $(DESTDIR)$(PREFIX)/share/bash-completion/completions/$(BINARY);; \
+		zsh)  rm -f $(DESTDIR)$(PREFIX)/share/zsh/site-functions/_$(BINARY);; \
+		fish) rm -f $(DESTDIR)$(PREFIX)/share/fish/vendor_completions.d/$(BINARY).fish;; \
+	esac
 
 clean:
 	rm -f $(BINARY)
