@@ -52,11 +52,15 @@ func Commit(repoRoot, message string) error {
 
 // Status returns modified/untracked files.
 func Status(repoRoot string) ([]string, error) {
-	cmd := exec.Command("git", "status", "--porcelain")
+	if !IsRepo(repoRoot) {
+		return nil, fmt.Errorf("not a git repository: %s", repoRoot)
+	}
+
+	cmd := exec.Command("git", "status", "--porcelain", "-uall")
 	cmd.Dir = repoRoot
-	out, err := cmd.Output()
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return nil, fmt.Errorf("git status failed: %w", err)
+		return nil, fmt.Errorf("git status failed: %s\n%s", err, string(out))
 	}
 
 	var files []string
