@@ -43,7 +43,7 @@ var todayCmd = &cobra.Command{
 			return fmt.Errorf("daily template not found: %w", err)
 		}
 
-		rendered := template.Render(tmplContent, "Daily Journal — "+date, "daily")
+		rendered := template.Render(tmplContent, "Daily Journal — "+date, "daily", "daily")
 
 		if err := writeFile(filePath, rendered); err != nil {
 			return fmt.Errorf("failed to write journal: %w", err)

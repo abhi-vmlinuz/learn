@@ -66,7 +66,7 @@ var newCmd = &cobra.Command{
 			return err
 		}
 
-		rendered := template.Render(tmplContent, title, category)
+		rendered := template.Render(tmplContent, title, category, selectedTemplate)
 
 		// Write file
 		filename := makeFilename(title)

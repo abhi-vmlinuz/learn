@@ -38,14 +38,56 @@ func LoadTemplate(dir, name string) (string, error) {
 	return string(data), nil
 }
 
+// categoryTags maps categories to relevant auto-generated tags.
+var categoryTags = map[string][]string{
+	"linux":           {"linux", "sysadmin", "cli"},
+	"aws":             {"aws", "cloud", "iaas"},
+	"docker":          {"docker", "containers", "devops"},
+	"kubernetes":      {"kubernetes", "k8s", "containers", "devops"},
+	"networking":      {"networking", "tcp", "sysadmin"},
+	"ctf":             {"ctf", "security", "challenge"},
+	"troubleshooting": {"troubleshooting", "debugging"},
+	"daily":           {"daily", "journal"},
+	"challenge":       {"challenge", "learning"},
+}
+
+// autoTags returns a YAML-formatted tag list for the given category and template.
+func autoTags(category, templateName string) string {
+	tags := []string{category}
+	if templateName != category {
+		tags = append(tags, templateName)
+	}
+	if extra, ok := categoryTags[category]; ok {
+		for _, t := range extra {
+			found := false
+			for _, existing := range tags {
+				if existing == t {
+					found = true
+					break
+				}
+			}
+			if !found {
+				tags = append(tags, t)
+			}
+		}
+	}
+	// Format as YAML list
+	quoted := make([]string, len(tags))
+	for i, t := range tags {
+		quoted[i] = "\"" + t + "\""
+	}
+	return "[" + strings.Join(quoted, ", ") + "]"
+}
+
 // Render replaces placeholders in a template string.
-func Render(content, title, category string) string {
+func Render(content, title, category, templateName string) string {
 	now := time.Now()
 	replacements := map[string]string{
 		"{title}":    title,
 		"{date}":     now.Format("2006-01-02"),
 		"{datetime}": now.Format(time.RFC3339),
 		"{category}": category,
+		"{tags}":     autoTags(category, templateName),
 	}
 
 	result := content

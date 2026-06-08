@@ -3,7 +3,7 @@ title: "Daily Journal — {date}"
 date: {date}
 category: daily
 created_at: {datetime}
-tags: []
+tags: {tags}
 status: active
 ---
 

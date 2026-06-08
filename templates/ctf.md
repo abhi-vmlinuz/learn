@@ -3,7 +3,7 @@ title: "{title}"
 date: {date}
 category: ctf
 created_at: {datetime}
-tags: []
+tags: {tags}
 status: active
 ---
 
