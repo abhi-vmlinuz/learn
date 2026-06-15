@@ -118,3 +118,17 @@ func openInEditor(path string) {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 }
+
+func openInViewer(path string) {
+	// Try glow first, fall back to $EDITOR
+	if _, err := exec.LookPath("glow"); err == nil {
+		cmd := exec.Command("glow", "-p", path)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+		return
+	}
+	fmt.Println("glow not found, falling back to $EDITOR")
+	openInEditor(path)
+}

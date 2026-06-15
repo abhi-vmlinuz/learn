@@ -33,6 +33,7 @@ var doctorCmd = &cobra.Command{
 		check("fzf", fzf.IsAvailable())
 		check("rg", hasBinary("rg"))
 		check("bat", hasBinary("bat"))
+		check("glow", hasBinary("glow"))
 		check("EDITOR", getEditor() != "")
 
 		// Config file

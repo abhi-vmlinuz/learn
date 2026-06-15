@@ -62,7 +62,7 @@ var reviewCmd = &cobra.Command{
 		}
 
 		fmt.Printf("Opening: %s\n", selected)
-		openInEditor(selected)
+		openInViewer(selected)
 
 		return nil
 	},
