@@ -43,7 +43,7 @@ func OpenInEditor(path string) {
 	cmd.Run()
 }
 
-// OpenInViewer opens a file in glow (markdown viewer), falls back to $EDITOR.
+// OpenInViewer opens a markdown file in glow, falls back to $EDITOR.
 func OpenInViewer(path string) {
 	if HasBinary("glow") {
 		cmd := exec.Command("glow", "-p", path)
@@ -55,4 +55,22 @@ func OpenInViewer(path string) {
 	}
 	fmt.Println("glow not found, falling back to $EDITOR")
 	OpenInEditor(path)
+}
+
+// OpenInPDFViewer opens a PDF file. Prefers tdf (terminal), falls back to xdg-open.
+func OpenInPDFViewer(path string) {
+	if HasBinary("tdf") {
+		cmd := exec.Command("tdf", path)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+		return
+	}
+	if HasBinary("xdg-open") {
+		cmd := exec.Command("xdg-open", path)
+		cmd.Start()
+		return
+	}
+	fmt.Printf("No PDF viewer found. File saved at: %s\n", path)
 }

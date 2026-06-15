@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"learn/internal/config"
+	"learn/internal/editor"
 	"learn/internal/export"
 	"learn/internal/fzf"
 	"learn/internal/file"
@@ -73,6 +74,26 @@ Requires wkhtmltopdf to be installed.`,
 		}
 
 		fmt.Println("Done.")
+
+		// Offer to open the PDF
+		openChoices := []string{"no"}
+		if editor.HasBinary("tdf") {
+			openChoices = append([]string{"tdf (terminal)"}, openChoices...)
+		}
+		openChoices = append([]string{"default app"}, openChoices...)
+
+		if len(openChoices) > 1 {
+			choice, err := fzf.Select(openChoices, "Open PDF")
+			if err == nil {
+				switch choice {
+				case "tdf (terminal)":
+					editor.OpenInPDFViewer(outPath)
+				case "default app":
+					editor.OpenInPDFViewer(outPath)
+				}
+			}
+		}
+
 		return nil
 	},
 }

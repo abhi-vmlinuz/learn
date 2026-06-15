@@ -34,6 +34,7 @@ var doctorCmd = &cobra.Command{
 		check("rg", editor.HasBinary("rg"))
 		check("bat", editor.HasBinary("bat"))
 		check("glow", editor.HasBinary("glow"))
+		check("tdf", editor.HasBinary("tdf"))
 		check("wkhtmltopdf", editor.HasBinary("wkhtmltopdf"))
 		check("EDITOR", editor.GetEditor() != "")
 
