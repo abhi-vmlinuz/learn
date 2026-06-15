@@ -38,22 +38,22 @@ If no message is provided, you will be prompted to enter one.`,
 			return fmt.Errorf("failed to check git status: %w", err)
 		}
 
-		// Filter to markdown files only
-		var mdFiles []string
+		// Filter to markdown and pdf files only
+		var noteFiles []string
 		for _, f := range files {
-			if strings.HasSuffix(f, ".md") {
-				mdFiles = append(mdFiles, f)
+			if strings.HasSuffix(f, ".md") || strings.HasSuffix(f, ".pdf") {
+				noteFiles = append(noteFiles, f)
 			}
 		}
 
-		if len(mdFiles) == 0 {
+		if len(noteFiles) == 0 {
 			fmt.Println("No modified or untracked notes to commit.")
 			return nil
 		}
 
 		// Display summary
 		fmt.Println("Will commit:")
-		for _, f := range mdFiles {
+		for _, f := range noteFiles {
 			rel, _ := filepath.Rel(repoRoot, f)
 			if rel == "" {
 				rel = f
@@ -76,8 +76,8 @@ If no message is provided, you will be prompted to enter one.`,
 			}
 		}
 
-		// Stage only the markdown files and commit
-		if err := git.AddFiles(repoRoot, mdFiles); err != nil {
+		// Stage only the markdown and pdf files and commit
+		if err := git.AddFiles(repoRoot, noteFiles); err != nil {
 			return fmt.Errorf("git add failed: %w", err)
 		}
 
@@ -85,7 +85,7 @@ If no message is provided, you will be prompted to enter one.`,
 			return fmt.Errorf("git commit failed: %w", err)
 		}
 
-		fmt.Printf("\nCommitted %d note(s): %s\n", len(mdFiles), message)
+		fmt.Printf("\nCommitted %d note(s): %s\n", len(noteFiles), message)
 
 		return nil
 	},
