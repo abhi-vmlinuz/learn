@@ -49,6 +49,7 @@ var categoryTags = map[string][]string{
 	"troubleshooting": {"troubleshooting", "debugging"},
 	"daily":           {"daily", "journal"},
 	"challenge":       {"challenge", "learning"},
+	"general":         {"general", "notes"},
 }
 
 // autoTags returns a YAML-formatted tag list for the given category and template.

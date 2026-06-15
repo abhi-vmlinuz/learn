@@ -10,27 +10,13 @@ import (
 	"learn/internal/config"
 	"learn/internal/editor"
 	"learn/internal/fzf"
+	"learn/internal/file"
 	"learn/internal/template"
 
 	"github.com/spf13/cobra"
 )
 
 var noEdit bool
-
-// knownCategories lists the default categories for matching templates.
-var knownCategories = []string{
-	"linux", "aws", "docker", "kubernetes",
-	"networking", "ctf", "troubleshooting", "challenge", "daily",
-}
-
-func categoryExists(cfg *config.Config, name string) bool {
-	for _, c := range knownCategories {
-		if c == name {
-			return true
-		}
-	}
-	return false
-}
 
 var newCmd = &cobra.Command{
 	Use:   "new",
@@ -68,11 +54,23 @@ var newCmd = &cobra.Command{
 			return fmt.Errorf("title cannot be empty")
 		}
 
-		// Auto-select category if template matches one
+		// Auto-select category if template matches an existing category
+		categories := file.ListCategories(cfg.Repo.Root)
+		if len(categories) == 0 {
+			return fmt.Errorf("no categories found. Run 'learn init' first")
+		}
+
 		category := selectedTemplate
-		if !categoryExists(cfg, category) {
-			// Template doesn't match a category, ask
-			category, err = fzf.Select(knownCategories, "Select category")
+		matched := false
+		for _, c := range categories {
+			if c == category {
+				matched = true
+				break
+			}
+		}
+		if !matched {
+			// Template doesn't match a category, ask user
+			category, err = fzf.Select(categories, "Select category")
 			if err != nil {
 				return err
 			}

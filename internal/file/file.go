@@ -58,15 +58,20 @@ func WriteFile(path string, content string) error {
 }
 
 // ListCategories returns subdirectories of the repo root that are category dirs.
+// Excludes hidden dirs, daily, and common non-category dirs.
 func ListCategories(repoRoot string) []string {
 	entries, err := os.ReadDir(repoRoot)
 	if err != nil {
 		return nil
 	}
 
+	skip := map[string]bool{
+		".git": true,
+	}
+
 	var dirs []string
 	for _, e := range entries {
-		if e.IsDir() && !strings.HasPrefix(e.Name(), ".") {
+		if e.IsDir() && !strings.HasPrefix(e.Name(), ".") && !skip[e.Name()] {
 			dirs = append(dirs, e.Name())
 		}
 	}

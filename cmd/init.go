@@ -43,6 +43,7 @@ var initCmd = &cobra.Command{
 			"troubleshooting",
 			"daily",
 			"challenge",
+			"general",
 		}
 
 		for _, cat := range categories {
