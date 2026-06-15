@@ -24,42 +24,68 @@ sudo make install
 | Tool | Purpose | Install |
 |------|---------|---------|
 | [git](https://git-scm.com/) | Version control | Pre-installed on most systems |
-| [fzf](https://github.com/junegunn/fzf) | Interactive selection | `sudo dnf install fzf` |
-| [ripgrep](https://github.com/BurntSushi/ripgrep) | Full-text search | `sudo dnf install ripgrep` |
-| [bat](https://github.com/sharkdp/bat) | Syntax-highlighted preview | `sudo dnf install bat` |
-| [glow](https://github.com/charmbracelet/glow) | Markdown terminal viewer | `sudo dnf install glow` |
+| [fzf](https://github.com/junegunn/fzf) | Interactive selection | See below |
+| [ripgrep](https://github.com/BurntSushi/ripgrep) | Full-text search | See below |
+| [bat](https://github.com/sharkdp/bat) | Syntax-highlighted preview | See below |
+| [glow](https://github.com/charmbracelet/glow) | Markdown terminal viewer | See below |
 
 #### Optional
 
 | Tool | Purpose | Install |
 |------|---------|---------|
 | [tdf](https://github.com/justjavac/tdf) | Terminal PDF viewer | `go install github.com/justjavac/tdf@latest` |
-| [wkhtmltopdf](https://wkhtmltopdf.org/) | PDF export | `sudo dnf install wkhtmltopdf` |
+| [wkhtmltopdf](https://wkhtmltopdf.org/) | PDF export | See below |
+
+#### Install all dependencies
 
 **Fedora / RHEL:**
 ```bash
-sudo dnf install fzf ripgrep bat glow wkhtmltopdf
+sudo dnf install fzf ripgrep bat glow
+# optional: sudo dnf install wkhtmltopdf
 ```
 
 **Debian / Ubuntu:**
 ```bash
-sudo apt install fzf ripgrep bat glow wkhtmltopdf
+sudo apt install fzf ripgrep bat
+# glow: https://github.com/charmbracelet/glow/releases
+# wkhtmltopdf: sudo apt install wkhtmltopdf
 ```
 
 **Arch:**
 ```bash
-sudo pacman -S fzf ripgrep bat glow wkhtmltopdf
+sudo pacman -S fzf ripgrep bat glow
+# optional: sudo pacman -S wkhtmltopdf
+```
+
+**openSUSE:**
+```bash
+sudo zypper install fzf ripgrep bat
+# glow: https://github.com/charmbracelet/glow/releases
+# optional: sudo zypper install wkhtmltopdf
+```
+
+**Alpine:**
+```bash
+apk add fzf ripgrep bat
+# glow: https://github.com/charmbracelet/glow/releases
+# optional: apk add wkhtmltopdf
 ```
 
 **macOS (Homebrew):**
 ```bash
-brew install fzf ripgrep bat glow wkhtmltopdf
+brew install fzf ripgrep bat glow
+# optional: brew install wkhtmltopdf
 ```
 
-**tdf (all platforms):**
+**tdf (all platforms, requires Go):**
 ```bash
 go install github.com/justjavac/tdf@latest
 ```
+
+> **Note:** `bat` may be installed as `batcat` on Debian/Ubuntu. If so, create a symlink:
+> ```bash
+> sudo ln -s /usr/bin/batcat /usr/local/bin/bat
+> ```
 
 After installing, verify everything is set up:
 
