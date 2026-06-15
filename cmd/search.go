@@ -75,8 +75,17 @@ Without a query, lists all notes for interactive browsing.`,
 			return err
 		}
 
-		fmt.Printf("Opening: %s\n", selected)
-		openInEditor(selected)
+		// Ask read or edit
+		action, err := fzf.Select([]string{"read", "edit"}, "Open mode")
+		if err != nil {
+			return err
+		}
+
+		if action == "read" {
+			openInViewer(selected)
+		} else {
+			openInEditor(selected)
+		}
 
 		return nil
 	},
