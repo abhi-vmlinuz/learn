@@ -14,11 +14,17 @@ const (
 )
 
 type Config struct {
-	Repo RepoConfig `toml:"repo"`
+	Repo     RepoConfig     `toml:"repo"`
+	Defaults DefaultsConfig `toml:"defaults"`
 }
 
 type RepoConfig struct {
 	Root string `toml:"root"`
+}
+
+type DefaultsConfig struct {
+	Viewer   string `toml:"viewer"`
+	Category string `toml:"category"`
 }
 
 func ConfigPath() string {

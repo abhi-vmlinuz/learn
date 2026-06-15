@@ -30,7 +30,7 @@ var newCmd = &cobra.Command{
 
 		templatesDir := config.TemplatesDir()
 
-		// List templates
+		// List available templates and categories
 		templates, err := template.ListAvailable(templatesDir)
 		if err != nil {
 			return fmt.Errorf("failed to list templates: %w", err)
@@ -39,13 +39,27 @@ var newCmd = &cobra.Command{
 			return fmt.Errorf("no templates found in %s", templatesDir)
 		}
 
-		// Select template via fzf
-		selectedTemplate, err := fzf.Select(templates, "Select template")
+		categories := file.ListCategories(cfg.Repo.Root)
+		if len(categories) == 0 {
+			return fmt.Errorf("no categories found. Run 'learn init' first")
+		}
+
+		// Step 1: Select category
+		category, err := fzf.Select(categories, "Select category")
 		if err != nil {
 			return err
 		}
 
-		// Prompt for title
+		// Step 2: Pick template — use matching one, fallback to general
+		selectedTemplate := "general"
+		for _, t := range templates {
+			if t == category {
+				selectedTemplate = t
+				break
+			}
+		}
+
+		// Step 3: Prompt for title
 		fmt.Print("Note title: ")
 		reader := bufio.NewReader(os.Stdin)
 		title, _ := reader.ReadString('\n')
@@ -54,37 +68,20 @@ var newCmd = &cobra.Command{
 			return fmt.Errorf("title cannot be empty")
 		}
 
-		// Auto-select category if template matches an existing category
-		categories := file.ListCategories(cfg.Repo.Root)
-		if len(categories) == 0 {
-			return fmt.Errorf("no categories found. Run 'learn init' first")
-		}
-
-		category := selectedTemplate
-		matched := false
-		for _, c := range categories {
-			if c == category {
-				matched = true
-				break
-			}
-		}
-		if !matched {
-			// Template doesn't match a category, ask user
-			category, err = fzf.Select(categories, "Select category")
-			if err != nil {
-				return err
-			}
-		}
-
-		// Load and render template
+		// Step 4: Load and render template (with fallback)
 		tmplContent, err := template.LoadTemplate(templatesDir, selectedTemplate)
 		if err != nil {
-			return err
+			// Fallback to general if template not found
+			tmplContent, err = template.LoadTemplate(templatesDir, "general")
+			if err != nil {
+				return fmt.Errorf("no template found for %q and general template missing", selectedTemplate)
+			}
+			selectedTemplate = "general"
 		}
 
 		rendered := template.Render(tmplContent, title, category, selectedTemplate)
 
-		// Write file
+		// Step 5: Write file
 		filename := makeFilename(title)
 		categoryDir := filepath.Join(cfg.Repo.Root, category)
 		filePath := filepath.Join(categoryDir, filename)
@@ -95,7 +92,7 @@ var newCmd = &cobra.Command{
 
 		fmt.Printf("Created: %s\n", filePath)
 
-		// Open in editor
+		// Step 6: Open in editor
 		if !noEdit {
 			editor.OpenInEditor(filePath)
 		}

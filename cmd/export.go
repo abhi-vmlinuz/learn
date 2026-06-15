@@ -75,21 +75,23 @@ Requires wkhtmltopdf to be installed.`,
 
 		fmt.Println("Done.")
 
-		// Offer to open the PDF
-		openChoices := []string{"no"}
-		if editor.HasBinary("tdf") {
-			openChoices = append([]string{"tdf (terminal)"}, openChoices...)
-		}
-		openChoices = append([]string{"default app"}, openChoices...)
+		// Offer to open the PDF (only in interactive mode)
+		if isTerminal() {
+			openChoices := []string{"no"}
+			if editor.HasBinary("tdf") {
+				openChoices = append([]string{"tdf (terminal)"}, openChoices...)
+			}
+			openChoices = append([]string{"default app"}, openChoices...)
 
-		if len(openChoices) > 1 {
-			choice, err := fzf.Select(openChoices, "Open PDF")
-			if err == nil {
-				switch choice {
-				case "tdf (terminal)":
-					editor.OpenInPDFViewer(outPath)
-				case "default app":
-					editor.OpenInPDFViewer(outPath)
+			if len(openChoices) > 1 {
+				choice, err := fzf.Select(openChoices, "Open PDF")
+				if err == nil {
+					switch choice {
+					case "tdf (terminal)":
+						editor.OpenInPDFViewer(outPath)
+					case "default app":
+						editor.OpenInPDFViewer(outPath)
+					}
 				}
 			}
 		}
@@ -100,4 +102,12 @@ Requires wkhtmltopdf to be installed.`,
 
 func init() {
 	rootCmd.AddCommand(exportCmd)
+}
+
+func isTerminal() bool {
+	fi, err := os.Stdin.Stat()
+	if err != nil {
+		return false
+	}
+	return fi.Mode()&os.ModeCharDevice != 0
 }

@@ -89,26 +89,31 @@ func init() {
 }
 
 func calculateStreaks(learningDir string) (current, longest int) {
-	dailyDir := filepath.Join(learningDir, "daily")
-	entries, err := os.ReadDir(dailyDir)
+	// Collect unique dates from all markdown filenames (YYYY-MM-DD-*.md)
+	allFiles, err := file.ListMarkdownFiles(learningDir)
 	if err != nil {
 		return 0, 0
 	}
 
-	var dates []time.Time
-	for _, e := range entries {
-		if e.IsDir() || !strings.HasSuffix(e.Name(), ".md") {
-			continue
-		}
-		dateStr := strings.TrimSuffix(e.Name(), ".md")
-		t, err := time.Parse("2006-01-02", dateStr)
-		if err == nil {
-			dates = append(dates, t)
+	dateSet := make(map[string]bool)
+	for _, f := range allFiles {
+		name := filepath.Base(f)
+		if len(name) >= 10 {
+			dateStr := name[:10]
+			if _, parseErr := time.Parse("2006-01-02", dateStr); parseErr == nil {
+				dateSet[dateStr] = true
+			}
 		}
 	}
 
-	if len(dates) == 0 {
+	if len(dateSet) == 0 {
 		return 0, 0
+	}
+
+	var dates []time.Time
+	for d := range dateSet {
+		t, _ := time.Parse("2006-01-02", d)
+		dates = append(dates, t)
 	}
 
 	sort.Slice(dates, func(i, j int) bool {
@@ -120,7 +125,7 @@ func calculateStreaks(learningDir string) (current, longest int) {
 	streak := 1
 	for i := 1; i < len(dates); i++ {
 		diff := dates[i].Sub(dates[i-1])
-		if diff.Hours() <= 48 { // within 2 days (allowing for timezone)
+		if diff.Hours() <= 48 {
 			streak++
 			if streak > longest {
 				longest = streak
