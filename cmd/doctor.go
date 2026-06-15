@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"learn/internal/config"
@@ -18,35 +19,47 @@ var doctorCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		allGood := true
 
-		checks := []struct {
-			name string
-			fn   func() bool
-		}{
-			{"git", func() bool { return git.IsAvailable() }},
-			{"fzf", func() bool { return fzf.IsAvailable() }},
-			{"rg", func() bool { _, err := exec.LookPath("rg"); return err == nil }},
-			{"bat", func() bool { _, err := exec.LookPath("bat"); return err == nil }},
-			{"EDITOR", func() bool { _, err := exec.LookPath(getEditor()); return err == nil }},
-		}
-
-		for _, c := range checks {
-			if c.fn() {
-				fmt.Printf("  ✓ %s\n", c.name)
+		check := func(name string, ok bool) {
+			if ok {
+				fmt.Printf("  ✓ %s\n", name)
 			} else {
-				fmt.Printf("  ✗ %s\n", c.name)
+				fmt.Printf("  ✗ %s\n", name)
 				allGood = false
 			}
 		}
 
-		// Check config
-		_, err := config.Load()
-		if err == nil {
-			fmt.Println("  ✓ repository")
-			fmt.Println("  ✓ config file")
+		// External tools
+		check("git", git.IsAvailable())
+		check("fzf", fzf.IsAvailable())
+		check("rg", hasBinary("rg"))
+		check("bat", hasBinary("bat"))
+		check("EDITOR", getEditor() != "")
+
+		// Config file
+		cfgPath := config.ConfigPath()
+		_, err := os.Stat(cfgPath)
+		check("config file", err == nil)
+
+		// Repository: config loads, root exists, root is a git repo
+		cfg, err := config.Load()
+		if err != nil {
+			check("repository", false)
+			fmt.Printf("         run 'learn init' in your notes directory\n")
 		} else {
-			fmt.Println("  ✗ repository (run 'learn init')")
-			fmt.Println("  ✗ config file")
-			allGood = false
+			// Does the directory actually exist?
+			info, err := os.Stat(cfg.Repo.Root)
+			if err != nil || !info.IsDir() {
+				check("repository", false)
+				fmt.Printf("         root not found: %s\n", cfg.Repo.Root)
+				fmt.Printf("         run 'learn init' to reinitialize\n")
+			} else if !git.IsRepo(cfg.Repo.Root) {
+				check("repository", false)
+				fmt.Printf("         root exists but is not a git repo: %s\n", cfg.Repo.Root)
+				fmt.Printf("         run 'git init' in that directory\n")
+			} else {
+				check("repository", true)
+				fmt.Printf("         %s\n", cfg.Repo.Root)
+			}
 		}
 
 		fmt.Println()
@@ -64,18 +77,23 @@ func init() {
 	rootCmd.AddCommand(doctorCmd)
 }
 
+func hasBinary(name string) bool {
+	_, err := exec.LookPath(name)
+	return err == nil
+}
+
 func getEditor() string {
-	editor := exec.Command("bash", "-c", "echo $EDITOR")
-	out, err := editor.Output()
-	if err != nil {
+	if e := os.Getenv("EDITOR"); e != "" {
+		return e
+	}
+	if hasBinary("nvim") {
+		return "nvim"
+	}
+	if hasBinary("vim") {
+		return "vim"
+	}
+	if hasBinary("vi") {
 		return "vi"
 	}
-	result := string(out)
-	if len(result) > 0 && result[len(result)-1] == '\n' {
-		result = result[:len(result)-1]
-	}
-	if result == "" {
-		return "vi"
-	}
-	return result
+	return ""
 }
