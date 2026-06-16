@@ -11,10 +11,18 @@ Notes are plain Markdown stored in a Git repository. The binary is a convenience
 Requires Go 1.21+.
 
 ```bash
-git clone https://github.com/abhi-vmlinuz/learn.git
+git clone git@github.com:abhi-vmlinuz/learn.git
 cd learn
-make build
+make
 sudo make install
+```
+
+### PDF export (optional)
+
+Requires Python 3 and weasyprint:
+
+```bash
+pip install -r requirements.txt
 ```
 
 ### Dependencies
@@ -34,14 +42,14 @@ sudo make install
 | Tool | Purpose | Install |
 |------|---------|---------|
 | [tdf](https://github.com/justjavac/tdf) | Terminal PDF viewer | `go install github.com/justjavac/tdf@latest` |
-| [weasyprint](https://weasyprint.org/) | PDF export | `pip install weasyprint` |
+| [weasyprint](https://weasyprint.org/) | PDF export | `pip install -r requirements.txt` |
 
 #### Install all dependencies
 
 **Fedora / RHEL:**
 ```bash
 sudo dnf install fzf ripgrep bat glow
-# optional: pip install weasyprint
+# optional: pip install -r requirements.txt
 ```
 
 **Debian / Ubuntu:**
@@ -54,27 +62,27 @@ sudo apt install fzf ripgrep bat
 **Arch:**
 ```bash
 sudo pacman -S fzf ripgrep bat glow
-# optional: pip install weasyprint
+# optional: pip install -r requirements.txt
 ```
 
 **openSUSE:**
 ```bash
 sudo zypper install fzf ripgrep bat
 # glow: https://github.com/charmbracelet/glow/releases
-# optional: pip install weasyprint
+# optional: pip install -r requirements.txt
 ```
 
 **Alpine:**
 ```bash
 apk add fzf ripgrep bat
 # glow: https://github.com/charmbracelet/glow/releases
-# optional: pip install weasyprint
+# optional: pip install -r requirements.txt
 ```
 
 **macOS (Homebrew):**
 ```bash
 brew install fzf ripgrep bat glow
-# optional: pip install weasyprint
+# optional: pip install -r requirements.txt
 ```
 
 **tdf (all platforms, requires Go):**
