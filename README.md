@@ -185,6 +185,8 @@ status: active
 ---
 ```
 
+**Generating templates with AI:** See [TEMPLATE-GUIDE.md](TEMPLATE-GUIDE.md) — a structured guide for AI models (ChatGPT, Claude, Gemini, etc.) to generate custom templates that follow the correct format with frontmatter and placeholders. Feed it to your AI of choice and ask it to create a template for your topic.
+
 ## Categories
 
 Default categories are created by `learn init`: aws, linux, docker, kubernetes, networking, ctf, troubleshooting, daily, challenge, general.
