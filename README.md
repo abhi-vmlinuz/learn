@@ -151,7 +151,7 @@ learn push
 | `learn push` | Push to git remote |
 | `learn pull` | Pull from git remote |
 | `learn log` | Show git history of notes |
-| `learn export [file]` | Export a note to styled PDF |
+| `learn export` | Export a note to styled PDF |
 | `learn stats` | Show learning statistics and streaks |
 | `learn doctor` | Check environment health |
 | `learn completion` | Shell completion scripts |

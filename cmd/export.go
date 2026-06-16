@@ -16,13 +16,11 @@ import (
 )
 
 var exportCmd = &cobra.Command{
-	Use:   "export [filepath]",
+	Use:   "export",
 	Short: "Export a note to PDF",
 	Long: `Export a markdown note to a beautifully styled PDF.
 
-If no filepath is given, select a note interactively via fzf.
-Requires weasyprint to be installed.`,
-	Args: cobra.MaximumNArgs(1),
+Select a note interactively via fzf. Requires weasyprint to be installed.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		requireDeps("weasyprint")
 
@@ -31,27 +29,18 @@ Requires weasyprint to be installed.`,
 			return err
 		}
 
-		var mdPath string
+		// Always use fzf selection
+		files, err := file.ListMarkdownFilesSorted(cfg.Repo.Root)
+		if err != nil {
+			return fmt.Errorf("failed to list notes: %w", err)
+		}
+		if len(files) == 0 {
+			return fmt.Errorf("no notes found")
+		}
 
-		if len(args) > 0 {
-			mdPath = args[0]
-			if !filepath.IsAbs(mdPath) {
-				mdPath = filepath.Join(cfg.Repo.Root, mdPath)
-			}
-		} else {
-			// Interactive selection
-			files, err := file.ListMarkdownFilesSorted(cfg.Repo.Root)
-			if err != nil {
-				return fmt.Errorf("failed to list notes: %w", err)
-			}
-			if len(files) == 0 {
-				return fmt.Errorf("no notes found")
-			}
-
-			mdPath, err = fzf.SelectWithPreview(files, "Export to PDF")
-			if err != nil {
-				return err
-			}
+		mdPath, err := fzf.SelectWithPreview(files, "Export to PDF")
+		if err != nil {
+			return err
 		}
 
 		// Check file exists
