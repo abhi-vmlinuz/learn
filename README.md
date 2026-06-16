@@ -11,7 +11,7 @@ Notes are plain Markdown stored in a Git repository. The binary is a convenience
 Requires Go 1.21+.
 
 ```bash
-git clone https://github.com:abhi-vmlinuz/learn.git
+git clone https://github.com/abhi-vmlinuz/learn.git
 cd learn
 make build
 sudo make install
