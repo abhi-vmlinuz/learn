@@ -144,9 +144,13 @@ learn push
 | `learn recent` | Browse recently edited notes |
 | `learn review` | Spaced repetition review of old notes |
 | `learn list` | List all notes by category |
+| `learn delete [file]` | Delete a note (with confirmation) |
+| `learn move [file]` | Move a note to a different category |
+| `learn tag [file]` | Edit tags on an existing note |
 | `learn commit [message]` | Stage and commit modified notes |
 | `learn push` | Push to git remote |
 | `learn pull` | Pull from git remote |
+| `learn log` | Show git history of notes |
 | `learn export [file]` | Export a note to styled PDF |
 | `learn stats` | Show learning statistics and streaks |
 | `learn doctor` | Check environment health |
@@ -196,6 +200,14 @@ mkdir ~/learning/exam-prep
 New categories are discovered automatically. They appear in `learn new`, `learn list`, `learn search --category`, and everywhere else. No config changes needed.
 
 The **general** template works for any topic — use it for study notes, exam prep, or anything that doesn't fit a specific category.
+
+**Custom templates:** If you want a category-specific template instead of falling back to general:
+
+```bash
+# Copy general as a starting point
+cp ~/.config/learn/templates/general.md ~/.config/learn/templates/math.md
+# Edit it to add math-specific sections
+```
 
 Customize templates at `~/.config/learn/templates/`. Running `learn init` again backs up existing templates before overwriting.
 
