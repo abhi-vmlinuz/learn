@@ -20,6 +20,8 @@ var commitCmd = &cobra.Command{
 
 If no message is provided, you will be prompted to enter one.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("git")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

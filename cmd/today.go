@@ -20,6 +20,8 @@ var todayCmd = &cobra.Command{
 	Short: "Create today's daily journal entry",
 	Long:  "Create or open today's daily journal entry.",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("EDITOR")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

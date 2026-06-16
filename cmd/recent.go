@@ -16,6 +16,8 @@ var recentCmd = &cobra.Command{
 	Short: "Browse recently edited notes",
 	Long:  "List recently modified notes sorted by time, with fzf selection and bat preview.",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("fzf", "bat", "glow")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

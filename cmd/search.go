@@ -25,6 +25,8 @@ var searchCmd = &cobra.Command{
 Without a query, lists all notes for interactive browsing.`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("fzf", "rg", "bat", "glow")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

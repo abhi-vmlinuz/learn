@@ -22,6 +22,8 @@ var deleteCmd = &cobra.Command{
 	Long:  "Move a note to trash (or permanently delete with --force).",
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("fzf")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

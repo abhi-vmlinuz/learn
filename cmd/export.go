@@ -24,9 +24,7 @@ If no filepath is given, select a note interactively via fzf.
 Requires wkhtmltopdf to be installed.`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if !export.IsAvailable() {
-			return fmt.Errorf("wkhtmltopdf is not installed\nInstall it: sudo dnf install wkhtmltopdf")
-		}
+		requireDeps("wkhtmltopdf")
 
 		cfg, err := config.Load()
 		if err != nil {

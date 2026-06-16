@@ -18,6 +18,8 @@ var moveCmd = &cobra.Command{
 	Long:  "Move a note from one category to another.",
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("fzf")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

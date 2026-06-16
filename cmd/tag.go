@@ -20,6 +20,8 @@ var tagCmd = &cobra.Command{
 	Long:  "Add or remove tags from an existing note's frontmatter.",
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("fzf")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

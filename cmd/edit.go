@@ -17,6 +17,8 @@ var editCmd = &cobra.Command{
 	Long:  "Browse and open a note in $EDITOR. Optionally filter with a search query.",
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("fzf", "EDITOR")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

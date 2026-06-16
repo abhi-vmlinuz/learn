@@ -28,22 +28,25 @@ var doctorCmd = &cobra.Command{
 			}
 		}
 
-		// External tools
+		fmt.Println("Required:")
 		check("git", git.IsAvailable())
 		check("fzf", fzf.IsAvailable())
 		check("rg", editor.HasBinary("rg"))
 		check("bat", editor.HasBinary("bat"))
 		check("glow", editor.HasBinary("glow"))
-		check("tdf", editor.HasBinary("tdf"))
-		check("wkhtmltopdf", editor.HasBinary("wkhtmltopdf"))
 		check("EDITOR", editor.GetEditor() != "")
 
-		// Config file
+		fmt.Println()
+		fmt.Println("Optional (for PDF export):")
+		check("wkhtmltopdf", editor.HasBinary("wkhtmltopdf"))
+		check("tdf", editor.HasBinary("tdf"))
+
+		fmt.Println()
+		fmt.Println("Repository:")
 		cfgPath := config.ConfigPath()
 		_, err := os.Stat(cfgPath)
 		check("config file", err == nil)
 
-		// Repository: config loads, root exists, root is a git repo
 		cfg, err := config.Load()
 		if err != nil {
 			check("repository", false)
@@ -69,6 +72,12 @@ var doctorCmd = &cobra.Command{
 			fmt.Println("Repository healthy")
 		} else {
 			fmt.Println("Some checks failed. Fix the issues above.")
+			fmt.Println()
+			fmt.Println("Install required dependencies:")
+			fmt.Println("  Fedora/RHEL:  sudo dnf install fzf ripgrep bat glow")
+			fmt.Println("  Debian/Ubuntu: sudo apt install fzf ripgrep bat")
+			fmt.Println("  Arch:          sudo pacman -S fzf ripgrep bat glow")
+			fmt.Println("  macOS:         brew install fzf ripgrep bat glow")
 		}
 
 		return nil

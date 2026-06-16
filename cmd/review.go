@@ -21,6 +21,8 @@ var reviewCmd = &cobra.Command{
 	Short: "Review old notes for spaced repetition",
 	Long:  "Randomly select notes older than N days for knowledge review.",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("fzf", "bat", "glow")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err

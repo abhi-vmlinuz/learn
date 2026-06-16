@@ -23,6 +23,8 @@ var newCmd = &cobra.Command{
 	Short: "Create a new note",
 	Long:  "Create a new note using a template, with interactive category and template selection.",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		requireDeps("fzf", "EDITOR")
+
 		cfg, err := config.Load()
 		if err != nil {
 			return err
