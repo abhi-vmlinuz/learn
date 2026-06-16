@@ -8,15 +8,17 @@ SHELL_NAME := $(notdir $(shell getent passwd $(REAL_USER) 2>/dev/null | cut -d: 
 VERSION   := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 LDFLAGS   := -ldflags "-s -w -X main.version=$(VERSION)"
 GOFLAGS   :=
+SOURCES   := $(shell find . -name '*.go' -not -path './vendor/*')
 
-.PHONY: all build install uninstall clean test fmt vet completions help
+.PHONY: all install uninstall clean test fmt vet completions help
 
-all: build
+all: $(BINARY)
 
-build:
+# Only rebuild when Go source files change
+$(BINARY): $(SOURCES)
 	go build $(GOFLAGS) $(LDFLAGS) -o $(BINARY) .
 
-install: build
+install: $(BINARY)
 	install -Dm755 $(BINARY) $(DESTDIR)$(BINDIR)/$(BINARY)
 	@case "$(SHELL_NAME)" in \
 		bash) \
@@ -61,19 +63,19 @@ vet:
 
 completions: completions-bash completions-zsh completions-fish
 
-completions-bash: build
+completions-bash: $(BINARY)
 	./$(BINARY) completion bash > bash-completion
 
-completions-zsh: build
+completions-zsh: $(BINARY)
 	./$(BINARY) completion zsh > zsh-completion
 
-completions-fish: build
+completions-fish: $(BINARY)
 	./$(BINARY) completion fish > fish-completion
 
 help:
 	@echo "Targets:"
-	@echo "  build           Build the binary"
-	@echo "  install         Install binary to $(DESTDIR)$(BINDIR) and bash completion"
+	@echo "  build           Build the binary (or just 'make')"
+	@echo "  install         Install binary and shell completion"
 	@echo "  uninstall       Remove installed binary and completion"
 	@echo "  clean           Remove build artifacts"
 	@echo "  test            Run tests"
