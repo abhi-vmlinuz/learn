@@ -193,9 +193,21 @@ status: active
 ---
 ```
 
-**Generating templates with AI:** See [TEMPLATE-GUIDE.md](docs/TEMPLATE-GUIDE.md) — a structured guide for AI models (ChatGPT, Claude, Gemini, etc.) to generate custom templates that follow the correct format with frontmatter and placeholders. Feed it to your AI of choice and ask it to create a template for your topic.
+## AI Skills
 
-**Generating notes with AI:** See [NOTE-GENERATOR.md](docs/NOTE-GENERATOR.md) — an AI skill that asks you questions about what you learned and generates a ready-to-save markdown note. Works with ChatGPT, Claude, Gemini, and other models that support system prompts or skills.
+Two AI skills are included in `docs/` — load them into your AI model (ChatGPT, Claude, Gemini, etc.) as system prompts, custom instructions, or skills.
+
+| Skill | File | What It Does |
+|-------|------|-------------|
+| Template Creator | [docs/TEMPLATE-GUIDE.md](docs/TEMPLATE-GUIDE.md) | Generates custom template files for new categories |
+| Note Generator | [docs/NOTE-GENERATOR.md](docs/NOTE-GENERATOR.md) | Asks you questions and generates a ready-to-save note |
+
+**How to use:**
+1. Open your AI model's settings (system prompt, custom instructions, or skills)
+2. Paste the contents of the skill file
+3. Start a conversation — the AI will follow the skill's workflow
+
+The **Note Generator** asks one question at a time based on the category (commands used, symptoms, root cause, etc.) and outputs a complete `.md` file with frontmatter that you save directly to your learn repo.
 
 ## Categories
 
