@@ -195,6 +195,8 @@ status: active
 
 **Generating templates with AI:** See [TEMPLATE-GUIDE.md](docs/TEMPLATE-GUIDE.md) — a structured guide for AI models (ChatGPT, Claude, Gemini, etc.) to generate custom templates that follow the correct format with frontmatter and placeholders. Feed it to your AI of choice and ask it to create a template for your topic.
 
+**Generating notes with AI:** See [NOTE-GENERATOR.md](docs/NOTE-GENERATOR.md) — an AI skill that asks you questions about what you learned and generates a ready-to-save markdown note. Works with ChatGPT, Claude, Gemini, and other models that support system prompts or skills.
+
 ## Categories
 
 Default categories are created by `learn init`: aws, linux, docker, kubernetes, networking, ctf, troubleshooting, daily, challenge, general.
