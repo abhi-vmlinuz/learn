@@ -43,12 +43,18 @@ view your stats, and optionally shut down.`,
 		fmt.Println("(Anything goes — technical, personal, random thoughts. Press Enter twice to finish, or 'skip')")
 		fmt.Println()
 
-		reader := bufio.NewReader(os.Stdin)
+		// Read from /dev/tty so stdin stays clean for fzf later
+		tty, err := os.Open("/dev/tty")
+		if err != nil {
+			return fmt.Errorf("failed to open terminal: %w", err)
+		}
+		defer tty.Close()
+
 		var lines []string
 		emptyCount := 0
-		for {
-			line, _ := reader.ReadString('\n')
-			line = strings.TrimSpace(line)
+		scanner := bufio.NewScanner(tty)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
 			if line == "skip" {
 				break
 			}
