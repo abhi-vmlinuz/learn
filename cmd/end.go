@@ -39,8 +39,8 @@ view your stats, and optionally shut down.`,
 		today := time.Now().Format("2006-01-02")
 
 		// Step 1: Prompt for reflection
-		fmt.Println("What did you learn today?")
-		fmt.Println("(Press Enter twice to finish, or type 'skip' to skip)")
+		fmt.Println("What's on your mind today?")
+		fmt.Println("(Anything goes — technical, personal, random thoughts. Press Enter twice to finish, or 'skip')")
 		fmt.Println()
 
 		reader := bufio.NewReader(os.Stdin)
